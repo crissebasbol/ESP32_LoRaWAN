@@ -64,6 +64,10 @@ extern uint8_t idDisplayJoined;
 extern uint8_t ifDisplayAck;
 extern uint16_t userChannelsMask[6];
 
+extern uint8_t appDataRx[LORAWAN_APP_DATA_MAX_SIZE];
+extern bool isDowLinkDataHandlefun();
+extern void deleteDowLinkDataHandle();
+
 extern LoRaWanClass LoRaWAN;
 extern SSD1306 Display;
 

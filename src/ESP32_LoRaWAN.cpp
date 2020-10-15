@@ -31,6 +31,14 @@ uint8_t appData[LORAWAN_APP_DATA_MAX_SIZE];
 
 
 /*!
+ * packet received
+ */
+uint8_t appDataRx[LORAWAN_APP_DATA_MAX_SIZE];
+
+bool isDowLinkDataHandle = false;
+
+
+/*!
  * Defines the application data transmission duty cycle
  */
 uint32_t txDutyCycleTime ;
@@ -193,13 +201,39 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
 	lora_printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
 	lora_printf("+REV DATA:");
+    
+    deleteDowLinkDataHandle();
+    isDowLinkDataHandle = true;
 
 	for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
 	{
 		lora_printf("%02X",mcpsIndication->Buffer[i]);
+        appDataRx[i] = mcpsIndication->Buffer[i];
 	}
 	lora_printf("\r\n");
 }
+
+
+bool isDowLinkDataHandlefun()
+{
+    if(isDowLinkDataHandle){
+        isDowLinkDataHandle = false;
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
+void deleteDowLinkDataHandle()
+{
+    isDowLinkDataHandle = false;
+    for(uint8_t i=0;i<LORAWAN_APP_DATA_MAX_SIZE;i++){
+        appDataRx[i] = NULL;
+    }
+}
+
 
 /*!
  * \brief   MCPS-Indication event function
